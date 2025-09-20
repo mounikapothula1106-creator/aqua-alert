@@ -15,6 +15,7 @@ const Header = () => {
     { name: 'Report Hazard', href: '/report' },
     { name: 'Community', href: '/community' },
     { name: 'Education', href: '/education' },
+    { name: 'IoT Dashboard', href: '/iot-dashboard' }, // ✅ Added IoT Dashboard
   ];
 
   const isActive = (path: string) => location.pathname === path;
