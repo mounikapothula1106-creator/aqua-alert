@@ -1,67 +1,106 @@
-import React, { useState, useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
+import React, { useEffect, useState } from 'react';
+import { AlertTriangle } from 'lucide-react';
 
-interface Sensor {
-  name: string;
-  value: number;
-  threshold: number;
-  unit: string;
+type SensorData = {
   location: string;
-}
+  ph: number;
+  temperature: number;
+  conductivity: number;
+  salinity: number;
+  turbidity: number;
+  dissolvedOxygen: number;
+  waterLevel: number;
+  orp: number;
+};
+
+// Create 10 sample locations
+const initialData: SensorData[] = Array.from({ length: 10 }, (_, i) => ({
+  location: `Location ${i + 1}`,
+  ph: parseFloat((7 + Math.random() * 2).toFixed(2)),
+  temperature: parseFloat((25 + Math.random() * 10).toFixed(1)),
+  conductivity: parseFloat((800 + Math.random() * 500).toFixed(1)),
+  salinity: parseFloat((30 + Math.random() * 10).toFixed(1)),
+  turbidity: parseFloat((5 + Math.random() * 10).toFixed(1)),
+  dissolvedOxygen: parseFloat((4 + Math.random() * 3).toFixed(1)),
+  waterLevel: parseFloat((3 + Math.random() * 5).toFixed(1)),
+  orp: parseFloat((200 + Math.random() * 100).toFixed(1)),
+}));
+
+// Thresholds for alerting
+const thresholds = {
+  ph: 7.5,
+  temperature: 30,
+  conductivity: 1000,
+  salinity: 35,
+  turbidity: 10,
+  dissolvedOxygen: 5,
+  waterLevel: 5,
+  orp: 250,
+};
 
 const IotDashboard: React.FC = () => {
-  const [sensors, setSensors] = useState<Sensor[]>([
-    { name: "pH", value: 7, threshold: 8, unit: "", location: "Location A" },
-    { name: "Temperature", value: 25, threshold: 35, unit: "°C", location: "Location B" },
-    { name: "Conductivity", value: 400, threshold: 500, unit: "µS/cm", location: "Location C" },
-    { name: "Salinity", value: 0.5, threshold: 1, unit: "ppt", location: "Location D" },
-    { name: "Turbidity", value: 2, threshold: 5, unit: "NTU", location: "Location E" },
-    { name: "Dissolved Oxygen", value: 6, threshold: 4, unit: "mg/L", location: "Location F" },
-    { name: "Water Level", value: 1.2, threshold: 2, unit: "m", location: "Location G" },
-    { name: "ORP", value: 200, threshold: 300, unit: "mV", location: "Location H" },
-  ]);
+  const [sensorData, setSensorData] = useState<SensorData[]>(initialData);
 
-  // Simulate sensor updates
+  // Update values every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setSensors((prev) =>
-        prev.map((sensor) => ({
-          ...sensor,
-          value: parseFloat((sensor.value + Math.random() * 2 - 1).toFixed(2)),
+      setSensorData((prev) =>
+        prev.map((loc) => ({
+          ...loc,
+          ph: parseFloat((loc.ph + (Math.random() * 0.4 - 0.2)).toFixed(2)),
+          temperature: parseFloat((loc.temperature + (Math.random() * 1 - 0.5)).toFixed(1)),
+          conductivity: parseFloat((loc.conductivity + (Math.random() * 20 - 10)).toFixed(1)),
+          salinity: parseFloat((loc.salinity + (Math.random() * 1 - 0.5)).toFixed(1)),
+          turbidity: parseFloat((loc.turbidity + (Math.random() * 1 - 0.5)).toFixed(1)),
+          dissolvedOxygen: parseFloat((loc.dissolvedOxygen + (Math.random() * 0.3 - 0.15)).toFixed(1)),
+          waterLevel: parseFloat((loc.waterLevel + (Math.random() * 0.5 - 0.25)).toFixed(1)),
+          orp: parseFloat((loc.orp + (Math.random() * 10 - 5)).toFixed(1)),
         }))
       );
-    }, 1000);
-
+    }, 5000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="p-4">
-      <h1 className="text-2xl font-bold mb-6">
-        🌍 IoT Disaster Alert Dashboard
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {sensors.map((sensor) => (
-          <div
-            key={sensor.name}
-            className={`p-4 rounded-lg shadow-md transition-colors ${
-              sensor.value > sensor.threshold ? "bg-red-100" : "bg-white"
-            }`}
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h2 className="font-semibold text-lg">{sensor.name}</h2>
-              {sensor.value > sensor.threshold && (
-                <AlertTriangle className="h-5 w-5 text-red-600" />
-              )}
-            </div>
-            <p className={`text-2xl font-bold ${
-              sensor.value > sensor.threshold ? "text-red-600" : "text-gray-900"
-            }`}>
-              {sensor.value} {sensor.unit}
-            </p>
-            <p className="text-gray-500 mt-1">Location: {sensor.location}</p>
-          </div>
-        ))}
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">🌍 IoT Disaster Alert Dashboard - Multiple Locations</h1>
+
+      <div className="overflow-x-auto">
+        <table className="min-w-full bg-white border border-gray-200">
+          <thead>
+            <tr className="bg-gray-100 text-left">
+              <th className="px-4 py-2 border">Location</th>
+              <th className="px-4 py-2 border">pH</th>
+              <th className="px-4 py-2 border">Temperature</th>
+              <th className="px-4 py-2 border">Conductivity</th>
+              <th className="px-4 py-2 border">Salinity</th>
+              <th className="px-4 py-2 border">Turbidity</th>
+              <th className="px-4 py-2 border">Dissolved O₂</th>
+              <th className="px-4 py-2 border">Water Level</th>
+              <th className="px-4 py-2 border">ORP</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sensorData.map((loc) => (
+              <tr key={loc.location} className="hover:bg-gray-50">
+                <td className="px-4 py-2 border font-semibold">{loc.location}</td>
+                {(['ph','temperature','conductivity','salinity','turbidity','dissolvedOxygen','waterLevel','orp'] as const).map((key) => {
+                  const value = loc[key];
+                  const alert = value > thresholds[key];
+                  return (
+                    <td
+                      key={key}
+                      className={`px-4 py-2 border ${alert ? 'text-red-600 font-bold' : ''}`}
+                    >
+                      {alert && <AlertTriangle className="inline w-4 h-4 mr-1 text-red-600" />}
+                      {value}
+                    </td>
+                  );
+                })}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );
