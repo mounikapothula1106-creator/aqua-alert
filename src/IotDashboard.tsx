@@ -37,41 +37,32 @@ const IotDashboard: React.FC = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">
+      <h1 className="text-2xl font-bold mb-6">
         🌍 IoT Disaster Alert Dashboard
       </h1>
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="px-4 py-2 border">Sensor</th>
-            <th className="px-4 py-2 border">Value</th>
-            <th className="px-4 py-2 border">Unit</th>
-            <th className="px-4 py-2 border">Location</th>
-            <th className="px-4 py-2 border">Alert</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sensors.map((sensor) => (
-            <tr key={sensor.name}>
-              <td className="px-4 py-2 border">{sensor.name}</td>
-              <td
-                className={`px-4 py-2 border ${
-                  sensor.value > sensor.threshold ? "text-red-600 font-bold" : ""
-                }`}
-              >
-                {sensor.value}
-              </td>
-              <td className="px-4 py-2 border">{sensor.unit}</td>
-              <td className="px-4 py-2 border">{sensor.location}</td>
-              <td className="px-4 py-2 border">
-                {sensor.value > sensor.threshold && (
-                  <AlertTriangle className="h-5 w-5 text-red-600 inline-block" />
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {sensors.map((sensor) => (
+          <div
+            key={sensor.name}
+            className={`p-4 rounded-lg shadow-md transition-colors ${
+              sensor.value > sensor.threshold ? "bg-red-100" : "bg-white"
+            }`}
+          >
+            <div className="flex items-center justify-between mb-2">
+              <h2 className="font-semibold text-lg">{sensor.name}</h2>
+              {sensor.value > sensor.threshold && (
+                <AlertTriangle className="h-5 w-5 text-red-600" />
+              )}
+            </div>
+            <p className={`text-2xl font-bold ${
+              sensor.value > sensor.threshold ? "text-red-600" : "text-gray-900"
+            }`}>
+              {sensor.value} {sensor.unit}
+            </p>
+            <p className="text-gray-500 mt-1">Location: {sensor.location}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
