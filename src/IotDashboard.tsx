@@ -1,107 +1,109 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
-type SensorData = {
+interface SensorData {
   location: string;
   ph: number;
-  temperature: number;
+  temp: number;
   conductivity: number;
   salinity: number;
   turbidity: number;
   dissolvedOxygen: number;
   waterLevel: number;
   orp: number;
-};
+}
 
-// Create 10 sample locations
-const initialData: SensorData[] = Array.from({ length: 10 }, (_, i) => ({
-  location: `Location ${i + 1}`,
-  ph: parseFloat((7 + Math.random() * 2).toFixed(2)),
-  temperature: parseFloat((25 + Math.random() * 10).toFixed(1)),
-  conductivity: parseFloat((800 + Math.random() * 500).toFixed(1)),
-  salinity: parseFloat((30 + Math.random() * 10).toFixed(1)),
-  turbidity: parseFloat((5 + Math.random() * 10).toFixed(1)),
-  dissolvedOxygen: parseFloat((4 + Math.random() * 3).toFixed(1)),
-  waterLevel: parseFloat((3 + Math.random() * 5).toFixed(1)),
-  orp: parseFloat((200 + Math.random() * 100).toFixed(1)),
-}));
+const IotDashboard = () => {
+  const [sensors, setSensors] = useState<SensorData[]>([]);
 
-// Thresholds for alerting
-const thresholds = {
-  ph: 7.5,
-  temperature: 30,
-  conductivity: 1000,
-  salinity: 35,
-  turbidity: 10,
-  dissolvedOxygen: 5,
-  waterLevel: 5,
-  orp: 250,
-};
+  // Initialize 10 locations
+  useEffect(() => {
+    const initialSensors: SensorData[] = [];
+    for (let i = 1; i <= 10; i++) {
+      initialSensors.push({
+        location: `Location ${i}`,
+        ph: 7,
+        temp: 25,
+        conductivity: 100,
+        salinity: 0.5,
+        turbidity: 2,
+        dissolvedOxygen: 8,
+        waterLevel: 50,
+        orp: 300,
+      });
+    }
+    setSensors(initialSensors);
+  }, []);
 
-const IotDashboard: React.FC = () => {
-  const [sensorData, setSensorData] = useState<SensorData[]>(initialData);
-
-  // Update values every 5 seconds
+  // Update sensor values every 5 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      setSensorData((prev) =>
-        prev.map((loc) => ({
-          ...loc,
-          ph: parseFloat((loc.ph + (Math.random() * 0.4 - 0.2)).toFixed(2)),
-          temperature: parseFloat((loc.temperature + (Math.random() * 1 - 0.5)).toFixed(1)),
-          conductivity: parseFloat((loc.conductivity + (Math.random() * 20 - 10)).toFixed(1)),
-          salinity: parseFloat((loc.salinity + (Math.random() * 1 - 0.5)).toFixed(1)),
-          turbidity: parseFloat((loc.turbidity + (Math.random() * 1 - 0.5)).toFixed(1)),
-          dissolvedOxygen: parseFloat((loc.dissolvedOxygen + (Math.random() * 0.3 - 0.15)).toFixed(1)),
-          waterLevel: parseFloat((loc.waterLevel + (Math.random() * 0.5 - 0.25)).toFixed(1)),
-          orp: parseFloat((loc.orp + (Math.random() * 10 - 5)).toFixed(1)),
+      setSensors(prev =>
+        prev.map(s => ({
+          ...s,
+          ph: +(6 + Math.random() * 2).toFixed(2),
+          temp: +(20 + Math.random() * 10).toFixed(1),
+          conductivity: +(80 + Math.random() * 40).toFixed(0),
+          salinity: +(0.3 + Math.random() * 0.7).toFixed(2),
+          turbidity: +(1 + Math.random() * 4).toFixed(1),
+          dissolvedOxygen: +(6 + Math.random() * 4).toFixed(1),
+          waterLevel: +(40 + Math.random() * 20).toFixed(0),
+          orp: +(250 + Math.random() * 100).toFixed(0),
         }))
       );
     }, 5000);
+
     return () => clearInterval(interval);
   }, []);
 
-  return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">🌍 IoT Disaster Alert Dashboard - Multiple Locations</h1>
+  // Helper to check if value crosses threshold
+  const checkAlert = (key: keyof SensorData, value: number) => {
+    const thresholds: { [key in keyof SensorData]?: number } = {
+      ph: 8,
+      temp: 30,
+      conductivity: 120,
+      salinity: 0.7,
+      turbidity: 3,
+      dissolvedOxygen: 6,
+      waterLevel: 45,
+      orp: 350,
+    };
+    return thresholds[key] !== undefined && ((key === 'dissolvedOxygen' || key === 'waterLevel') ? value < thresholds[key]! : value > thresholds[key]!);
+  };
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr className="bg-gray-100 text-left">
-              <th className="px-4 py-2 border">Location</th>
-              <th className="px-4 py-2 border">pH</th>
-              <th className="px-4 py-2 border">Temperature</th>
-              <th className="px-4 py-2 border">Conductivity</th>
-              <th className="px-4 py-2 border">Salinity</th>
-              <th className="px-4 py-2 border">Turbidity</th>
-              <th className="px-4 py-2 border">Dissolved O₂</th>
-              <th className="px-4 py-2 border">Water Level</th>
-              <th className="px-4 py-2 border">ORP</th>
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">🌍 IoT Dashboard</h1>
+      <table className="w-full border border-gray-300 text-center">
+        <thead className="bg-gray-100">
+          <tr>
+            <th className="border p-2">Location</th>
+            <th className="border p-2">pH</th>
+            <th className="border p-2">Temp</th>
+            <th className="border p-2">Conductivity</th>
+            <th className="border p-2">Salinity</th>
+            <th className="border p-2">Turbidity</th>
+            <th className="border p-2">Dissolved O₂</th>
+            <th className="border p-2">Water Level</th>
+            <th className="border p-2">ORP</th>
+          </tr>
+        </thead>
+        <tbody>
+          {sensors.map((s, idx) => (
+            <tr key={idx}>
+              <td className="border p-2">{s.location}</td>
+              {(Object.keys(s) as (keyof SensorData)[]).map(key =>
+                key !== 'location' ? (
+                  <td key={key} className={`border p-2 ${checkAlert(key, s[key]) ? 'text-red-600 font-bold flex items-center justify-center' : ''}`}>
+                    {checkAlert(key, s[key]) && <AlertTriangle className="h-4 w-4 mr-1 inline" />}
+                    {s[key]}
+                  </td>
+                ) : null
+              )}
             </tr>
-          </thead>
-          <tbody>
-            {sensorData.map((loc) => (
-              <tr key={loc.location} className="hover:bg-gray-50">
-                <td className="px-4 py-2 border font-semibold">{loc.location}</td>
-                {(['ph','temperature','conductivity','salinity','turbidity','dissolvedOxygen','waterLevel','orp'] as const).map((key) => {
-                  const value = loc[key];
-                  const alert = value > thresholds[key];
-                  return (
-                    <td
-                      key={key}
-                      className={`px-4 py-2 border ${alert ? 'text-red-600 font-bold' : ''}`}
-                    >
-                      {alert && <AlertTriangle className="inline w-4 h-4 mr-1 text-red-600" />}
-                      {value}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
