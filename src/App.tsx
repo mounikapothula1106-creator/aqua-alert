@@ -7,6 +7,7 @@ import HazardMap from './pages/HazardMap';
 import ReportHazard from './pages/ReportHazard';
 import Community from './pages/Community';
 import Education from './pages/Education';
+import IotDashboard from './IotDashboard'; // ✅ Correct import
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -22,14 +23,15 @@ function App() {
             <Header />
             <main className="flex-1">
               <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/map" element={<HazardMap />} />
-                <Route path="/report" element={<ReportHazard />} />
-                <Route path="/community" element={<Community />} />
-                <Route path="/education" element={<Education />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/register" element={<Register />} />
+                <Route path='/' element={<Home />} />
+                <Route path='/map' element={<HazardMap />} />
+                <Route path='/report' element={<ReportHazard />} />
+                <Route path='/community' element={<Community />} />
+                <Route path='/education' element={<Education />} />
+                <Route path='/iot-dashboard' element={<IotDashboard />} /> {/* ✅ IoT Dashboard */}
+                <Route path='/dashboard' element={<Dashboard />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/register' element={<Register />} />
               </Routes>
             </main>
             <Footer />
