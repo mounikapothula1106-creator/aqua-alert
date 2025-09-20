@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -7,7 +7,7 @@ import HazardMap from './pages/HazardMap';
 import ReportHazard from './pages/ReportHazard';
 import Community from './pages/Community';
 import Education from './pages/Education';
-import IotDashboard from "./IotDashboard";
+import IotDashboard from './IotDashboard';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
