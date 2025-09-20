@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
 import Footer from './components/Footer';
@@ -10,6 +10,7 @@ import Education from './pages/Education';
 import Dashboard from './pages/Dashboard';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import IotDashboard from './IotDashboard';
 import { AuthProvider } from './contexts/AuthContext';
 import { HazardProvider } from './contexts/HazardContext';
 
@@ -28,6 +29,7 @@ function App() {
                 <Route path="/community" element={<Community />} />
                 <Route path="/education" element={<Education />} />
                 <Route path="/dashboard" element={<Dashboard />} />
+                <Route path="/iot-dashboard" element={<IotDashboard />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
               </Routes>
